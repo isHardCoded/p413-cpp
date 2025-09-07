@@ -1,42 +1,21 @@
 ﻿#include <iostream>
 
-// Напишите программу на C++ для реализации класса BankAccount с приватными переменными-членами для номера счёта и баланса. 
-// Включите функции-члены для пополнения и снятия денег со счёта.
+class Device {
+	public:
+		int serial_number = 1010;
 
-class BankAccount {
-private:
-	int number;
-	double balance;
-
-public: 
-	BankAccount() {
-		this->number = 111111;
-		this->balance = 0;
-	}
-
-	int getNumber() const {
-		return number;
-	}
-
-	int getBalance() const {
-		return balance;
-	}
-
-	void deposit(double amount) {
-		if (amount > 0) balance += amount;
-	}
-
-	void withdraw(double amount) {
-		if (amount > 0 && amount <= balance) balance -= amount;
-	}
+		void turn_on() {
+			std::cout << "Device is turn on\n";
+		}
 };
+
+class Phone : public Device {};
 
 int main()
 {
-	BankAccount account;
+	Phone phone;
+	
+	std::cout << phone.serial_number << std::endl;
+	phone.turn_on();
 
-	account.deposit(500);
-	account.withdraw(250);
-
-	std::cout << account.getBalance() << std::endl;
 }
