@@ -1,28 +1,49 @@
 ﻿#include <iostream>
 
-// Напишите программу на C++ для создания класса Rectangle с приватными переменными-членами для хранения длины и ширины. 
-// Реализуйте функции-члены для вычисления площади и периметра прямоугольника.
+// Напишите программу на C++ для создания класса Person с приватными переменными-членами для имени, возраста и страны. 
+// Реализуйте функции-члены для установки и получения значений этих переменных.
 
-class Rectangle {
+class Person {
 	private:
-		double width;
-		double height;
+		std::string name;
+		int age;
+		std::string country;
 
 	public:
-		Rectangle(double w, double h) : width(w), height(h) {}
-
-		double area() const {
-			return width * height;
+		int getAge() const {
+			return age;
 		}
 
-		double perimeter() const {
-			return 2 * (width + height);
+		void setAge(int a) {
+			age = a;
 		}
+
+		std::string getName() const {
+			return name;
+		}
+
+		void setName(const std::string& n) {
+			name = n;
+		}
+
+		std::string getCountry() const {
+			return country;
+		}
+
+		void setCountry(const std::string& c) {
+			country = c;
+		}
+
+
 };
 
 int main()
 {
-	Rectangle r(5, 2);
-	std::cout << r.area() << std::endl;
-	std::cout << r.perimeter() << std::endl;
+	Person n;
+
+	n.setName("John");
+	n.setAge(20);
+	n.setCountry("Russia");
+
+	std::cout << n.getName() << ", " << n.getAge() << ", " << n.getCountry() << std::endl;
 }
