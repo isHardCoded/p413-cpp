@@ -1,40 +1,71 @@
 ﻿#include <iostream>
 
-class Device {
+class Shape {
 	public:
-		int serial_number = 1010;
+		virtual double area() const = 0;
+		virtual double perimeter() const = 0;
+};
 
-		void turn_on() {
-			std::cout << "Device is turn on\n";
+class Circle : public Shape {
+	private:
+		double radius;
+
+	public:
+		Circle(double r) : radius(r) {};
+
+		double area() const override {
+			return 3.14 * radius * radius;
 		}
 
-		virtual void identify() {
-			std::cout << "I am device";
+		double perimeter() const override {
+			return 2 * 3.14 * radius;
 		}
 };
 
-class Phone : public Device {
-	public:
-		int ram_size = 16;
+class Rectangle : public Shape {
+	private:
+		double width;
+		double height;
 
-		void identify() override {
-			std::cout << "I am phone with " << ram_size << "GB RAM\n";
+	public:
+		Rectangle(double w, double h) : width(w), height(h) {}
+
+		double area() const override {
+			return width * height;
+		}
+
+		double perimeter() const override {
+			return 2 * (width + height);
 		}
 };
 
-class Computer : public Device {
+class Triangle : public Shape {
+	private:
+		double a, b, c, h;
+
 	public:
-		void identify() override {
-			std::cout << "I am computer";
+		Triangle(double a, double b, double c, double h) {
+			this->a = a;
+			this->b = b;
+			this->c = c;
+			this->h = h;
+		}
+
+		double area() const override {
+			return b * h / 2;
+		}
+
+		double perimeter() const override {
+			return a + b + c;
 		}
 };
 
 int main()
 {
-	Phone phone;
-	
-	std::cout << phone.serial_number << std::endl;
-	phone.turn_on();
-	phone.identify();
+	Shape* shapes[] = { new Circle(5), new Rectangle(2, 2), new Triangle(3, 4, 5, 5) };
 
+	for (auto shape : shapes) {
+		std::cout << "Area: " << shape->area() << std::endl;
+		std::cout << "Perimeter: " << shape->perimeter() << std::endl;
+	}
 }
