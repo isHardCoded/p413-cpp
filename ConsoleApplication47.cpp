@@ -1,46 +1,42 @@
 ﻿#include <iostream>
 
-// Напишите программу на C++ для создания класса Car с приватными переменными-членами для хранения данных о компании, модели и годе выпуска. 
-// Реализуйте функции-члены для получения и установки этих переменных.
+// Напишите программу на C++ для реализации класса BankAccount с приватными переменными-членами для номера счёта и баланса. 
+// Включите функции-члены для пополнения и снятия денег со счёта.
 
-class Car {
-	private:
-		std::string model;
-		std::string company;
-		int year;
+class BankAccount {
+private:
+	int number;
+	double balance;
 
-	public:
-		int getYear() const {
-			return year;
-		}
+public: 
+	BankAccount() {
+		this->number = 111111;
+		this->balance = 0;
+	}
 
-		void setYear(int y) {
-			year = y;
-		}
+	int getNumber() const {
+		return number;
+	}
 
-		std::string getCompany() const {
-			return company;
-		}
+	int getBalance() const {
+		return balance;
+	}
 
-		void setCompany(const std::string c) {
-			company = c;
-		}
+	void deposit(double amount) {
+		if (amount > 0) balance += amount;
+	}
 
-		std::string getModel() const {
-			return model;
-		}
-
-		void setModel(const std::string m) {
-			model = m;
-		}
+	void withdraw(double amount) {
+		if (amount > 0 && amount <= balance) balance -= amount;
+	}
 };
 
 int main()
 {
-	Car c;
-	c.setCompany("Toyota");
-	c.setModel("Camry");
-	c.setYear(2022);
+	BankAccount account;
 
-	std::cout << c.getCompany() << ", " << c.getModel() << ", " << c.getYear() << std::endl;
+	account.deposit(500);
+	account.withdraw(250);
+
+	std::cout << account.getBalance() << std::endl;
 }
