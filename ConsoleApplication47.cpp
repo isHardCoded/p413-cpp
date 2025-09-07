@@ -1,30 +1,28 @@
 ﻿#include <iostream>
-#define _USE_MATH_DEFINES
-#include <cmath>
 
-// Напишите программу на C++ для реализации класса Circle с приватными переменными-членами для хранения радиуса.
-// Включите функции-члены для вычисления площади и длины окружности.
+// Напишите программу на C++ для создания класса Rectangle с приватными переменными-членами для хранения длины и ширины. 
+// Реализуйте функции-члены для вычисления площади и периметра прямоугольника.
 
-class Circle {
+class Rectangle {
 	private:
-		double radius;
-		double PI = 3.14;
+		double width;
+		double height;
 
 	public:
-		Circle(double r) : radius(r) {}
+		Rectangle(double w, double h) : width(w), height(h) {}
 
 		double area() const {
-			return PI * radius * radius;
+			return width * height;
 		}
 
-		double circumference() const {
-			return 2 * PI * radius;
+		double perimeter() const {
+			return 2 * (width + height);
 		}
 };
 
 int main()
 {
-	Circle c(5);
-	std::cout << c.area() << std::endl;
-	std::cout << c.circumference() << std::endl;
+	Rectangle r(5, 2);
+	std::cout << r.area() << std::endl;
+	std::cout << r.perimeter() << std::endl;
 }
