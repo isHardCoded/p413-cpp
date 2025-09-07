@@ -1,49 +1,46 @@
 ﻿#include <iostream>
 
-// Напишите программу на C++ для создания класса Person с приватными переменными-членами для имени, возраста и страны. 
-// Реализуйте функции-члены для установки и получения значений этих переменных.
+// Напишите программу на C++ для создания класса Car с приватными переменными-членами для хранения данных о компании, модели и годе выпуска. 
+// Реализуйте функции-члены для получения и установки этих переменных.
 
-class Person {
+class Car {
 	private:
-		std::string name;
-		int age;
-		std::string country;
+		std::string model;
+		std::string company;
+		int year;
 
 	public:
-		int getAge() const {
-			return age;
+		int getYear() const {
+			return year;
 		}
 
-		void setAge(int a) {
-			age = a;
+		void setYear(int y) {
+			year = y;
 		}
 
-		std::string getName() const {
-			return name;
+		std::string getCompany() const {
+			return company;
 		}
 
-		void setName(const std::string& n) {
-			name = n;
+		void setCompany(const std::string c) {
+			company = c;
 		}
 
-		std::string getCountry() const {
-			return country;
+		std::string getModel() const {
+			return model;
 		}
 
-		void setCountry(const std::string& c) {
-			country = c;
+		void setModel(const std::string m) {
+			model = m;
 		}
-
-
 };
 
 int main()
 {
-	Person n;
+	Car c;
+	c.setCompany("Toyota");
+	c.setModel("Camry");
+	c.setYear(2022);
 
-	n.setName("John");
-	n.setAge(20);
-	n.setCountry("Russia");
-
-	std::cout << n.getName() << ", " << n.getAge() << ", " << n.getCountry() << std::endl;
+	std::cout << c.getCompany() << ", " << c.getModel() << ", " << c.getYear() << std::endl;
 }
