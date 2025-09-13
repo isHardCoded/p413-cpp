@@ -1,19 +1,26 @@
 ﻿#include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
 #include <filesystem>
 
 class FileManager {
 private:
-	std::string pathname;
-
-public:
-	FileManager(const std::string& pathname) {
-		this->pathname = pathname;
+	std::string basePath;
+	std::filesystem::path fullPath(const std::filesystem::path& relativePath) const {
+		return basePath / relativePath;
 	}
 
-	bool createFile() {
-		std::ofstream ofs(pathname);
+public:
+	FileManager(const std::string& base) : basePath(base) {
+		if (!std::filesystem::exists(basePath)) {
+			std::filesystem::create_directories(basePath);
+		}
+	}
+
+	bool createFile(const std::string& relativePath) {
+		auto filePath = fullPath(relativePath);
+		std::ofstream ofs(filePath);
 
 		if (!ofs) {
 			std::cerr << "Ошибка создания файла";
@@ -24,65 +31,72 @@ public:
 		return true;
 	}
 
-	bool fileExists() {
-		return std::filesystem::exists(pathname);
+	bool createDirectory(const std::string& relativePath) {
+		auto dirPath = fullPath(relativePath);
+		if (!std::filesystem::exists(dirPath)) {
+			return std::filesystem::create_directories(dirPath);
+		}
+		return false;
 	}
 
-	bool writeFile(const std::string& content) {
-		std::ofstream ofs(pathname);
-
-		if (!ofs) {
-			std::cerr << "Ошибка открытия файла для записи";
-			return false;
-		}
-
-		ofs << content;
-		ofs.close();
-		return true;
+	bool fileExists(const std::string& relativePath) {
+		auto filePath = fullPath(relativePath);
+		return std::filesystem::exists(filePath) && std::filesystem::is_regular_file(filePath);
 	}
 
-	bool removeFile() {
-		if (std::filesystem::remove(pathname)) {
-			return true;
-		}
-		else {
-			std::cerr << "Ошибка удаления файла";
-			return false;
-		}
-
+	bool directoryExists(const std::string& relativePath) {
+		auto dirPath = fullPath(relativePath);
+		return std::filesystem::exists(dirPath) && std::filesystem::is_directory(dirPath);
 	}
 
-	std::string readFile() {
-		std::ifstream ifs(pathname);
+	std::vector<std::string> listFiles(const std::string& relativePath) {
+		std::vector<std::string> files;
+		auto dirPath = fullPath(relativePath);
 
-		if (!ifs) {
-			std::cerr << "Ошибка открытия файла для чтения";
-			return "";
+		if (directoryExists(relativePath)) {
+			for (const auto& entry : std::filesystem::directory_iterator(dirPath)) {
+
+				files.push_back(entry.path().filename().string());
+
+			}
 		}
 
-		std::string content((std::istreambuf_iterator<char>(ifs)), (std::istreambuf_iterator<char>()));
-
-		return content;
+		return files;
 	}
 
+	bool removeFile(const std::string& relativePath) {
+		auto filePath = fullPath(relativePath);
 
+		if (fileExists(relativePath)) {
+			return std::filesystem::remove(filePath);
+		}
+
+		return false;
+	}
+
+	bool removeDirectory(const std::string& relativePath) {
+		auto dirPath = fullPath(relativePath);
+
+		if (directoryExists(relativePath)) {
+			return std::filesystem::remove(dirPath);
+		}
+
+		return false;
+	}
 };
 
 int main()
 {
-	FileManager fm("file.txt");
+	FileManager fm("test_base");
 
-	if (!fm.fileExists()) {
-		std::cout << "Файла не существует. Он будет создан: " << std::endl;
-		fm.createFile();
-	}
-	fm.writeFile("Hello!");
+	std::cout << "Создадим папку 'test_dir': " << fm.createDirectory("test_dir") << std::endl;
 
-	std::string content = fm.readFile();
+	std::cout << "Создадим файл: 'test_dir/file1.txt': " << fm.createFile("test_dir/file1.txt") << std::endl;
+	std::cout << "Создадим файл: 'test_dir/file2.txt': " << fm.createFile("test_dir/file2.txt") << std::endl;
+	std::cout << "Создадим файл: 'test_dir/file3.txt': " << fm.createFile("test_dir/file3.txt") << std::endl;
 
-	std::cout << "Содержимое файла: " << content << std::endl;
-
-	if (fm.removeFile()) {
-		std::cout << "Файл успешно удален" << std::endl;
+	std::cout << "Файлы в 'test_dir': " << std::endl;
+	for (auto f : fm.listFiles("test_dir")) {
+		std::cout << " " << f << std::endl;
 	}
 }
