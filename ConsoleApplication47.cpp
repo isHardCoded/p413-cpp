@@ -1,102 +1,53 @@
 ﻿#include <iostream>
-#include <fstream>
-#include <string>
-#include <vector>
-#include <filesystem>
 
-class FileManager {
-private:
-	std::string basePath;
-	std::filesystem::path fullPath(const std::filesystem::path& relativePath) const {
-		return basePath / relativePath;
-	}
+class Device {
+	protected:
+		std::string brand;
 
-public:
-	FileManager(const std::string& base) : basePath(base) {
-		if (!std::filesystem::exists(basePath)) {
-			std::filesystem::create_directories(basePath);
-		}
-	}
-
-	bool createFile(const std::string& relativePath) {
-		auto filePath = fullPath(relativePath);
-		std::ofstream ofs(filePath);
-
-		if (!ofs) {
-			std::cerr << "Ошибка создания файла";
-			return false;
+	public:
+		Device(const std::string& brand) {
+			this->brand = brand;
 		}
 
-		ofs.close();
-		return true;
-	}
-
-	bool createDirectory(const std::string& relativePath) {
-		auto dirPath = fullPath(relativePath);
-		if (!std::filesystem::exists(dirPath)) {
-			return std::filesystem::create_directories(dirPath);
+		virtual void show() {
+			std::cout << "Device brand: " << brand << std::endl;
 		}
-		return false;
-	}
+};
 
-	bool fileExists(const std::string& relativePath) {
-		auto filePath = fullPath(relativePath);
-		return std::filesystem::exists(filePath) && std::filesystem::is_regular_file(filePath);
-	}
+class Computer : public Device {
+	protected:
+		int ram;
 
-	bool directoryExists(const std::string& relativePath) {
-		auto dirPath = fullPath(relativePath);
-		return std::filesystem::exists(dirPath) && std::filesystem::is_directory(dirPath);
-	}
+	public:
+		Computer(const std::string& b, int r) : Device(b), ram(r) {}
 
-	std::vector<std::string> listFiles(const std::string& relativePath) {
-		std::vector<std::string> files;
-		auto dirPath = fullPath(relativePath);
-
-		if (directoryExists(relativePath)) {
-			for (const auto& entry : std::filesystem::directory_iterator(dirPath)) {
-
-				files.push_back(entry.path().filename().string());
-
-			}
+		void show() override {
+			std::cout << "Computer brand: " << brand << std::endl;
+			std::cout << "RAM: " << ram << std::endl;
 		}
+};
 
-		return files;
-	}
+class Phone : public Device {
+	protected:
+		std::string phone_number;
 
-	bool removeFile(const std::string& relativePath) {
-		auto filePath = fullPath(relativePath);
+	public:
+		Phone(const std::string& phone, const std::string& b) 
+			: Device(b), phone_number(phone) {}
 
-		if (fileExists(relativePath)) {
-			return std::filesystem::remove(filePath);
+		void show() override {
+			std::cout << "Phone brand: " << brand << std::endl;
+			std::cout << "Phone number: " << phone_number << std::endl;
 		}
+};
 
-		return false;
-	}
-
-	bool removeDirectory(const std::string& relativePath) {
-		auto dirPath = fullPath(relativePath);
-
-		if (directoryExists(relativePath)) {
-			return std::filesystem::remove(dirPath);
-		}
-
-		return false;
-	}
+class Smartphone : public Computer, public Phone {
+	public:
+		Smartphone(const std::string& b, int r, const std::string& phone)
+			: Computer(b, r), Phone(phone, b) {}
 };
 
 int main()
 {
-	FileManager fm("test_base");
-
-	std::cout << "Создадим папку 'test_dir': " << fm.createDirectory("test_dir") << std::endl;
-
-	std::cout << "Создадим файл: 'test_dir/file1.txt': " << fm.createFile("test_dir/file1.txt") << std::endl;
-	std::cout << "Создадим файл: 'test_dir/file2.txt': " << fm.createFile("test_dir/file2.txt") << std::endl;
-	std::cout << "Создадим файл: 'test_dir/file3.txt': " << fm.createFile("test_dir/file3.txt") << std::endl;
-
-	std::cout << "Файлы в 'test_dir': " << std::endl;
-	for (auto f : fm.listFiles("test_dir")) {
-		std::cout << " " << f << std::endl;
-	}
+	Computer computer("Samsung", 16);
 }
