@@ -1,21 +1,20 @@
 ﻿#include <iostream>
 
-class Array {
-private:
-	int* data;
-	int size;
+class Counter {
+	public:
+		static int count;
 
-public:
-	Array(int n) : size(n) {
-		data = new int[size];
-	}
+		Counter() { ++count; }
 
-	~Array() {
-		delete[] data;
-	}
+		static int getCount() {
+			return count;
+		}
 };
+
+int Counter::count = 0;
 
 int main()
 {
-	
+	Counter a, b, c;
+	std::cout << a.getCount();
 }
