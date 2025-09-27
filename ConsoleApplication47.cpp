@@ -1,67 +1,43 @@
 ﻿#include <iostream>
 
-class Employee {
-	private:
-		std::string name;
-		int id;
-		static int nextId;
-		static int employeeCount;
+class Circle {
+private:
+	double radius;
+	static double scale;
+public:
+	Circle(double r) : radius(r) {}
 
-	public:
-		Employee(const std::string& employeeName) : name(employeeName) {
-			id = nextId++;
-			employeeCount++;
-		}
+	double area() const {
+		return 3.14 * radius * radius * scale;
+	}
 
-		~Employee() {
-			employeeCount--;
-		}
+	static double getScale() {
+		return scale;
+	}
 
-		int getId() {
-			return id;
-		}
-
-		std::string getName() {
-			return name;
-		}
-
-		static int getEmployeeCount() {
-			return employeeCount;
-		}
-
-		static void reset() {
-			nextId = 1;
-			employeeCount = 0;
-		}
+	static void setScale(double value) {
+		scale = value;
+	}
 };
 
-int Employee::nextId = 1;
-int Employee::employeeCount = 0;
+double Circle::scale = 1.0;
 
 int main()
 {
-	std::cout << "Starting Employee count: " << Employee::getEmployeeCount() << std::endl;
+	Circle c1(1);
+	Circle c2(2);
+	Circle c3(3);
 
-	Employee e1("John");
-	Employee e2("Tom");
-	Employee e3("Sam");
+	std::cout << Circle::getScale() << std::endl;
+	std::cout << c1.area() << std::endl;
+	std::cout << c2.area() << std::endl;
+	std::cout << c3.area() << std::endl;
 
-	std::cout << "Employees created: " << std::endl;
+	std::cout << std::endl;
+	Circle::setScale(2.0);
 
-	std::cout << e1.getName() << " with ID " << e1.getId() << std::endl;
-	std::cout << e2.getName() << " with ID " << e2.getId() << std::endl;
-	std::cout << e3.getName() << " with ID " << e3.getId() << std::endl;
-
-	std::cout << "Current Employee count: " << Employee::getEmployeeCount() << std::endl;
-
-	{
-		Employee e4("Tim");
-		std::cout << "New employee created: " << e4.getName() << std::endl;
-		std::cout << "Employee count now: " << Employee::getEmployeeCount() << std::endl;
-	}
-
-	std::cout << "After destruct, employee count: " << Employee::getEmployeeCount() << std::endl;
-	
-	Employee::reset();
-	std::cout << "After rest, employee count: " << Employee::getEmployeeCount() << std::endl;
+	std::cout << Circle::getScale() << std::endl;
+	std::cout << c1.area() << std::endl;
+	std::cout << c2.area() << std::endl;
+	std::cout << c3.area() << std::endl;
 }
