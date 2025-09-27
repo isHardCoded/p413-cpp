@@ -1,43 +1,32 @@
 ﻿#include <iostream>
 
-class Circle {
-private:
-	double radius;
-	static double scale;
-public:
-	Circle(double r) : radius(r) {}
+class Product {
+	private:
+		std::string name;
+		double priceUSD;
+		static double exchangeRate;
+	public:
+		Product(const std::string& n, double price) : name(n), priceUSD(price) {}
 
-	double area() const {
-		return 3.14 * radius * radius * scale;
-	}
+		double getPrice() {
+			return priceUSD * exchangeRate;
+		}
 
-	static double getScale() {
-		return scale;
-	}
-
-	static void setScale(double value) {
-		scale = value;
-	}
+		static void setExchangeRate(double rate) {
+			exchangeRate = rate;
+		}
 };
 
-double Circle::scale = 1.0;
+double Product::exchangeRate = 75.3;
 
 int main()
 {
-	Circle c1(1);
-	Circle c2(2);
-	Circle c3(3);
+	Product p1("Phone", 800);
+	Product p2("PC", 1100);
 
-	std::cout << Circle::getScale() << std::endl;
-	std::cout << c1.area() << std::endl;
-	std::cout << c2.area() << std::endl;
-	std::cout << c3.area() << std::endl;
+	Product::setExchangeRate(82.2);
 
-	std::cout << std::endl;
-	Circle::setScale(2.0);
+	std::cout << p1.getPrice() << std::endl;
+	std::cout << p2.getPrice() << std::endl;
 
-	std::cout << Circle::getScale() << std::endl;
-	std::cout << c1.area() << std::endl;
-	std::cout << c2.area() << std::endl;
-	std::cout << c3.area() << std::endl;
 }
