@@ -1,39 +1,92 @@
 ﻿#include <iostream>
 #include <cpr/cpr.h>
+#include <nlohmann/json.hpp>
 
-using namespace std;
+using json = nlohmann::json;
 
-class HttpClient {
+class Post {
 	public:
-		virtual cpr::Response get(const string& url) = 0;
-		virtual cpr::Response post(const string& url, const string& body, const cpr::Header& headers) = 0;
+		int id;
+		std::string title;
+		std::string content;
+
+		Post() : id(0) {}
+		Post(const std::string& title, const std::string& content) 
+			: title(title), content(content), id(0) {
+		}
+
+		json to_json() const {
+			json j;
+			j["id"] = id;
+			j["title"] = title;
+			j["content"] = content;
+			return j;
+		}
+
+		static Post from_json(const json& j) {
+			Post p;
+			p.id = j.value("id", 0);
+			p.title = j.value("title", "");
+			p.content = j.value("content", "");
+			return p;
+		}
+
+		void Show() const {
+			std::cout << "Post ID: " << id << "\nTitle: " << title << "\nContent: " << content;
+		}
 };
 
-class UserClient : public HttpClient {
+class PostService {
 	private:
-		string BASE_URL;
-
+		std::string base_url = "https://6764432352b2a7619f5bfef7.mockapi.io/posts";
 	public:
-		UserClient(const string& url) : BASE_URL(url) {}
-
-		cpr::Response get(const string& url) override {
-			return cpr::Get(cpr::Url{ url });
+		Post create_post(const Post& post) {
+			cpr::Response response = cpr::Post(
+				cpr::Url{ base_url },
+				cpr::Body{ post.to_json().dump() },
+				cpr::Header{ {"Content-Type", "application/json"} }
+			);
+			json j = json::parse(response.text);
+			return Post::from_json(j);
 		}
 
-		cpr::Response post(const string& url, const string& body, const cpr::Header& headers) override {
-			return cpr::Post(cpr::Url{ url }, cpr::Body{ body }, headers);
+		Post get_post(int id) {
+			cpr::Response response = cpr::Get(cpr::Url{ base_url + "/" + std::to_string(id) });
+			json j = json::parse(response.text);
+			return Post::from_json(j);
 		}
 
-		cpr::Response getUsers() {
-			return get(BASE_URL + "/users");
+		Post update_post(int id, const Post& post) {
+			cpr::Response response = cpr::Put(
+				cpr::Url{ base_url + "/" + std::to_string(id) },
+				cpr::Body{ post.to_json().dump() },
+				cpr::Header{ {"Content-Type", "application/json"} }
+			);
+			json j = json::parse(response.text);
+			return Post::from_json(j);
+		}
+
+		void delete_post(int id) {
+			cpr::Response response = cpr::Delete(cpr::Url{ base_url + "/" + std::to_string(id) });
+			if (response.status_code == 200 || response.status_code == 204) {
+				std::cout << "Post deleted!" << std::endl;
+			}
+			else {
+				std::cout << "Error" << std::endl;
+			}
 		}
 };
 
 int main()
 {
-	UserClient client("https://6764432352b2a7619f5bfef7.mockapi.io");
+	PostService postService;
 
-	cpr::Response response = client.getUsers();
-	std::cout << "GET status: " << response.status_code << std::endl;
-	std::cout << "GET body: " << response.text << std::endl;
+	Post p("My Post", "Text post");
+	postService.create_post(p).Show();
+	postService.get_post(4).Show();
+
+	//Post p_updated("My Post UPDATED", "Text post UPDATED");
+	//postService.update_post(p_updated.id, p_updated).Show();
+
+	/*postService.delete_post(p_updated.id);*/
 }
