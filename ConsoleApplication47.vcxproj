@@ -137,6 +137,8 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="packages\libcpr.1.11.3\build\native\libcpr.targets" Condition="Exists('packages\libcpr.1.11.3\build\native\libcpr.targets')" />
+    <Import Project="packages\nlohmann.json.3.12.0\build\native\nlohmann.json.targets" Condition="Exists('packages\nlohmann.json.3.12.0\build\native\nlohmann.json.targets')" />
+    <Import Project="packages\Nlohmann-JSON.3.8.0\build\native\Nlohmann-JSON.targets" Condition="Exists('packages\Nlohmann-JSON.3.8.0\build\native\Nlohmann-JSON.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -144,5 +146,7 @@
     </PropertyGroup>
     <Error Condition="!Exists('packages\libcpr.1.11.3\build\native\libcpr.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libcpr.1.11.3\build\native\libcpr.props'))" />
     <Error Condition="!Exists('packages\libcpr.1.11.3\build\native\libcpr.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\libcpr.1.11.3\build\native\libcpr.targets'))" />
+    <Error Condition="!Exists('packages\nlohmann.json.3.12.0\build\native\nlohmann.json.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\nlohmann.json.3.12.0\build\native\nlohmann.json.targets'))" />
+    <Error Condition="!Exists('packages\Nlohmann-JSON.3.8.0\build\native\Nlohmann-JSON.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\Nlohmann-JSON.3.8.0\build\native\Nlohmann-JSON.targets'))" />
   </Target>
 </Project>
