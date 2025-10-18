@@ -1,76 +1,29 @@
 ﻿#include <iostream>
-#include "PostService.h"
+#include <cpr/cpr.h>
+#include <nlohmann/json.hpp>
 
-void print_menu() {
-	std::cout << "\nChoose an option\n"
-		<< "1. Create post\n"
-		<< "2. Read post\n"
-		<< "3. Update post\n"
-		<< "4. Delete post\n"
-		<< "5. Exit\n"
-		<< "Enter choice: ";
-}
+using json = nlohmann::json;
 
 int main()
 {
-	PostService postService;
-	int choice;
+	std::string apiKey = "c78f11918a7b4ce3b95192241252808";
+	std::string city;
+	std::cout << "Enter city: ";
+	std::cin >> city;
+	std::string url = "http://api.weatherapi.com/v1/current.json?key=" + apiKey + "&q=" + city;
 
-	do {
-		print_menu();
-		std::cin >> choice;
+	cpr::Response response = cpr::Get(cpr::Url{ url });
 
-		if (choice == 1) {
-			Post post;
-			std::cout << "Enter title: ";
-			std::cin >> post.title;
-			std::cout << "Enter content: ";
-			std::cin >> post.content;
-
-			Post createdPost = postService.create_post(post);
-			std::cout << "Created post:\n";
-			createdPost.Show();
-		}
-
-		else if (choice == 2) {
-			int id;
-			std::cout << "Enter Post ID to read: ";
-			std::cin >> id;
-
-			Post readedPost = postService.get_post(id);
-			std::cout << "Post:\n";
-			readedPost.Show();
-		}
-
-		else if (choice == 3) {
-			int id;
-			std::cout << "Enter Post ID to read: ";
-			std::cin >> id;
-
-			Post newPost;
-			std::cout << "Enter title: ";
-			std::cin >> newPost.title;
-			std::cout << "Enter content: ";
-			std::cin >> newPost.content;
-
-			Post updatedPost = postService.update_post(id, newPost);
-			updatedPost.Show();
-		}
-
-		else if (choice == 4) {
-			int id;
-			std::cout << "Enter Post ID to delete: ";
-			std::cin >> id;
-			postService.delete_post(id);
-		}
-
-		else if (choice == 5) {
-			std::cout << "Exiting...";
-		}
-		
-		else {
-			std::cout << "Invalid choice.";
-		}
-
-	} while (choice != 5);
+	if (response.status_code == 200) {
+		json j = json::parse(response.text);
+		std::cout << "Weather in " << city << std::endl;
+		std::cout << "Temp: " << j["current"]["temp_c"] << "°C" << std::endl;
+		std::cout << "Condition: " << j["current"]["condition"]["text"] << std::endl;
+		std::cout << "Humidity: " << j["current"]["humidity"] << " %" << std::endl;
+		std::cout << "Wind speed: " << j["current"]["wind_kph"] << " km/h" << std::endl;
+	}
+	else {
+		std::cout << response.status_code;
+		std::cout << response.text;
+	}
 }
