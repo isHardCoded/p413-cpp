@@ -5,27 +5,80 @@
 
 using json = nlohmann::json;
 
+class NewsItem {
+private:
+	std::string title;
+	std::string description;
+	std::string author;
+	std::string published;
+
+public:
+	NewsItem(
+		const std::string& t, 
+		const std::string& desc, 
+		const std::string& a,
+		const std::string& p
+	) : title(t), description(desc), author(a), published(p)  {}
+
+	void PrintNewsItem() {
+		std::cout << "Title: " << title << std::endl;
+		std::cout << "Description: " << description << std::endl;
+		std::cout << "Author: " << author << std::endl;
+		std::cout << "Published: " << published << std::endl;
+	}
+};
+
+void PrintMenu() {
+	std::cout << "1. Get news list" << "\n";
+	std::cout << "2. Search news by keyword" << "\n";
+	std::cout << "3. Exit" << "\n";
+}
+
 int main()
 {
-	std::string firstCurrency;
-	std::string secondCurrency;
 
-	std::cout << "Enter first currency: ";
-	std::cin >> firstCurrency;
+	int choose;
+	do {
+		PrintMenu();
+		std::cout << "Enter choose: ";
+		std::cin >> choose;
 
-	std::cout << "Enter second currency: ";
-	std::cin >> secondCurrency;
+		if (choose == 1) {
+			std::string apiKey = "nZHQT0Wknk12H1OJemjk-4F7-d3AX9Zpljd7zx9EFf14dsGf";
+			std::string url = "https://api.currentsapi.services/v1/latest-news?apiKey=" + apiKey;
 
-	std::string apiKey = "8a991d8624046f4421474b3c55539013";
-	std::string url = "https://currate.ru/api/?get=rates&pairs=" + firstCurrency + secondCurrency + "&key=" + apiKey;
+			cpr::Response response = cpr::Get(cpr::Url{ url });
 
-	cpr::Response response = cpr::Get(cpr::Url{ url });
+			if (response.status_code == 200) {
+				json j = json::parse(response.text);
 
-	if (response.status_code == 200) {
-		json j = json::parse(response.text);
-		std::cout << j["data"].value(firstCurrency + secondCurrency, "0") << std::endl;
-	}
-	else {
-		std::cout << "Error: " << response.status_code;
-	}
+				std::cout << "News" << std::endl;
+
+				for (auto post : j["news"]) {
+					std::cout << "Title: " << post["title"] << std::endl;
+					std::cout << "Description: " << post["description"] << std::endl;
+					std::cout << "Author: " << post["author"] << std::endl;
+					std::cout << "Published: " << post["published"] << std::endl;
+
+					std::cout << "Category: ";
+					for (auto category : post["category"]) {
+						std::cout << category << " ";
+					}
+
+					std::cout << std::endl;
+				}
+			}
+			else {
+				std::cout << "Error: " << response.status_code << std::endl;
+			}
+		}
+		else if(choose == 2) {
+
+		}
+		else {
+			std::cout << "Incorrect choose";
+		}
+	} while (choose != 3);
+
+	
 }
