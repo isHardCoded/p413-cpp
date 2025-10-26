@@ -1,84 +1,109 @@
 ﻿#include <iostream>
 #include <cpr/cpr.h>
 #include <nlohmann/json.hpp>
-#include <typeinfo>
 
 using json = nlohmann::json;
 
-class NewsItem {
-private:
-	std::string title;
-	std::string description;
-	std::string author;
-	std::string published;
+class Auth {
+	private:
+		std::string username;
+		std::string email;
+		std::string password;
 
-public:
-	NewsItem(
-		const std::string& t, 
-		const std::string& desc, 
-		const std::string& a,
-		const std::string& p
-	) : title(t), description(desc), author(a), published(p)  {}
+		std::string message;
+		std::string error;
+		std::string token;
 
-	void PrintNewsItem() {
-		std::cout << "Title: " << title << std::endl;
-		std::cout << "Description: " << description << std::endl;
-		std::cout << "Author: " << author << std::endl;
-		std::cout << "Published: " << published << std::endl;
-	}
+	public:
+		Auth() : message(""), error(""), token("") {}
+		Auth(
+			const std::string& username, 
+			const std::string& email, 
+			const std::string& password
+		) {
+			this->username = username;
+			this->email = email;
+			this->password = password;
+		}
+
+		json RegisterSerialize() const {
+			json j;
+			j["username"] = username;
+			j["email"] = email;
+			j["password"] = password;
+			return j;
+		}
+
+		json LoginSerialize() const {
+			json j;
+			j["email"] = email;
+			j["password"] = password;
+			return j;
+		}
+
+		Auth RegisterDeserialize(const json& j) {
+			Auth auth;
+			auth.message = j.value("message", "");
+			auth.error = j.value("error", "");
+			return auth;
+		}
+		
+		Auth LoginDeserialize(const json& j) {
+			Auth auth;
+			auth.message = j.value("message", "");
+			auth.token = j.value("token", "");
+			auth.error = j.value("error", "");
+			return auth;
+		}
+
+		std::string getMessage() const {
+			return message;
+		}
+
+		std::string getToken() const {
+			return token;
+		}
 };
-
-void PrintMenu() {
-	std::cout << "1. Get news list" << "\n";
-	std::cout << "2. Search news by keyword" << "\n";
-	std::cout << "3. Exit" << "\n";
-}
 
 int main()
 {
+	std::string username;
+	std::string email;
+	std::string password;
 
-	int choose;
-	do {
-		PrintMenu();
-		std::cout << "Enter choose: ";
-		std::cin >> choose;
+	std::cout << "Enter username: ";
+	std::cin >> username;
+	std::cout << "Enter email: ";
+	std::cin >> email;
+	std::cout << "Enter password: ";
+	std::cin >> password;
 
-		if (choose == 1) {
-			std::string apiKey = "nZHQT0Wknk12H1OJemjk-4F7-d3AX9Zpljd7zx9EFf14dsGf";
-			std::string url = "https://api.currentsapi.services/v1/latest-news?apiKey=" + apiKey;
+	Auth auth(username, email, password);
 
-			cpr::Response response = cpr::Get(cpr::Url{ url });
+	cpr::Response response = cpr::Post
+	(
+		cpr::Url{ "http://localhost:8080/register" },
+		cpr::Header{ { "Content-Type", "application/json"} },
+		cpr::Body{ auth.RegisterSerialize().dump()}
+	); 
 
-			if (response.status_code == 200) {
-				json j = json::parse(response.text);
+	std::cout << auth.RegisterDeserialize(json::parse(response.text)).getMessage() << std::endl;
 
-				std::cout << "News" << std::endl;
+	cpr::Response response1 = cpr::Post
+	(
+		cpr::Url{ "http://localhost:8080/login" },
+		cpr::Header{ { "Content-Type", "application/json"} },
+		cpr::Body{ auth.LoginSerialize().dump() }
+	);
 
-				for (auto post : j["news"]) {
-					std::cout << "Title: " << post["title"] << std::endl;
-					std::cout << "Description: " << post["description"] << std::endl;
-					std::cout << "Author: " << post["author"] << std::endl;
-					std::cout << "Published: " << post["published"] << std::endl;
+	std::cout << auth.LoginDeserialize(json::parse(response1.text)).getToken() << std::endl;
 
-					std::cout << "Category: ";
-					for (auto category : post["category"]) {
-						std::cout << category << " ";
-					}
+	cpr::Response response2 = cpr::Get
+	(
+		cpr::Url {"http://localhost:8080/profile"},
+		cpr::Header{ { "Authorization", "Bearer " + auth.LoginDeserialize(json::parse(response1.text)).getToken() } }
+	);
 
-					std::cout << std::endl;
-				}
-			}
-			else {
-				std::cout << "Error: " << response.status_code << std::endl;
-			}
-		}
-		else if(choose == 2) {
-
-		}
-		else {
-			std::cout << "Incorrect choose";
-		}
-	} while (choose != 3);
-
-	
+	std::cout << "Status code: " << response2.status_code << std::endl;
+	std::cout << "Body: " << response2.text << std::endl;
 }
