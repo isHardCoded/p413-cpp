@@ -2,46 +2,43 @@
 #include <iostream>
 #include <cstring>
 
-class String {
-	private:
-		char* data;
+class Book {
+	char* title;
+	int pages;
 
-	public:
-		String(const char* str) {
-			if (str) {
-				data = new char[strlen(str) + 1];
-				strcpy(data, str);
-			}
-			else {
-				data = nullptr;
-			}
-		}
+public:
+	Book(const char* t, int p) : pages(p) {
+		title = new char[strlen(t) + 1];
+		strcpy(title, t);
+		std::cout << "Object created" << std::endl;
+	}
 
-		String(const String& other) {
-			if (other.data) {
-				data = new char[strlen(other.data) + 1];
-				strcpy(data, other.data);
-			}
-			else {
-				data = nullptr;
-			}
-			std::cout << "Object copied" << std::endl;
+	Book(const Book& other) : pages(other.pages) {
+		if (other.title) {
+			title = new char[strlen(other.title) + 1];
+			strcpy(title, other.title);
 		}
+		else {
+			title = nullptr;
+		}
+		std::cout << "Object copied" << std::endl;
+	}
 
-		void print() const {
-			if (data) std::cout << data << std::endl;
-			else std::cout << "null" << std::endl;
-		}
+	void print() const {
+		std::cout << "Book: " << title << ", Pages: " << pages << std::endl;
+	}
 
-		~String() {
-			delete[] data;
-		}
+	~Book() {
+		delete[] title;
+		std::cout << "Object deleted" << std::endl;
+	}
 };
 
 int main()
 {
-	String s("Hello");
-	String s2 = s;
-	s2.print();
-	s.print();
+	Book book1("Book 1", 20);
+	Book book2 = book1;
+
+	book1.print();
+	book2.print();
 }
