@@ -17,19 +17,31 @@ class String {
 			}
 		}
 
+		String(const String& other) {
+			if (other.data) {
+				data = new char[strlen(other.data) + 1];
+				strcpy(data, other.data);
+			}
+			else {
+				data = nullptr;
+			}
+			std::cout << "Object copied" << std::endl;
+		}
+
 		void print() const {
 			if (data) std::cout << data << std::endl;
 			else std::cout << "null" << std::endl;
 		}
 
-		// 
+		~String() {
+			delete[] data;
+		}
 };
-
 
 int main()
 {
 	String s("Hello");
 	String s2 = s;
-	s.print();
 	s2.print();
+	s.print();
 }
