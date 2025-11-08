@@ -1,29 +1,35 @@
-﻿#include <iostream>
+﻿#define _CRT_SECURE_NO_WARNINGS
+#include <iostream>
+#include <cstring>
 
-class User {
-	private:	
-		std::string name;
+class String {
+	private:
+		char* data;
 
 	public:
-		User(const std::string& n) : name(n) {
-			std::cout << "Object created" << std::endl;
+		String(const char* str) {
+			if (str) {
+				data = new char[strlen(str) + 1];
+				strcpy(data, str);
+			}
+			else {
+				data = nullptr;
+			}
 		}
 
-		User(const User& other) {
-			name = other.name;
-			std::cout << "Object copied" << std::endl;
+		void print() const {
+			if (data) std::cout << data << std::endl;
+			else std::cout << "null" << std::endl;
 		}
 
-		std::string getName() {
-			return name;
-		}
+		// 
 };
+
 
 int main()
 {
-	User user1("John");
-	User user2 = user1;
-
-	std::cout << user1.getName() << std::endl;
-	std::cout << user2.getName() << std::endl;
+	String s("Hello");
+	String s2 = s;
+	s.print();
+	s2.print();
 }
