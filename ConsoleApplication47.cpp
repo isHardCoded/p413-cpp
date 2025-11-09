@@ -3,21 +3,28 @@
 int main()
 {
 	try {
-		float a, b;
+		int* ptr = nullptr;
+		int size;
 
-		std::cout << "Put digit a: ";
-		std::cin >> a;
+		std::cout << "Put size: ";
+		std::cin >> size;
 
-		std::cout << "Put digit b: ";
-		std::cin >> b;
-
-		if (b == 0) {
-			throw b;
+		if (size < 1 || size > 500) {
+			throw "Incorrect size";
 		}
 
-		std::cout << "Result = " << (a / b) << std::endl;
+		ptr = new int[size];
+
+		if (!ptr) {
+			throw "Error memory";
+		}
 	}
-	catch (float error) {
-		std::cout << "Error - Divide by " << error << std::endl;
+
+	catch (char* error) {
+		std::cout << error << std::endl;
+	}
+
+	catch (...) {
+		std::cout << "Unknown error!" << std::endl;
 	}
 }
