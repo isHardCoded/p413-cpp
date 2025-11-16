@@ -23,7 +23,7 @@ class Date {
 			int totalDays = 0;
 
 			for (int y = 0; y < year; ++y) {
-				totalDays += isLeapYear(year) ? 366 : 365;
+				totalDays += isLeapYear(y) ? 366 : 365;
 			}
 
 			for (int m = 0; m < month; ++m) {
@@ -88,7 +88,7 @@ const int Date::daysInMonth[12] = { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 
 int main()
 {
 	Date date1(25, 11, 2025);
-	Date date2(25, 11, 2000);
+	Date date2(25, 11, 1);
 
 	std::cout << date1 - date2 << std::endl;
 
