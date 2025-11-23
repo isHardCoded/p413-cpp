@@ -1,35 +1,37 @@
 ﻿#include <iostream>
 
-class Student {
+class Passport {
 	protected:
-		std::string name;
-		int age;
-		std::string group;
+		std::string citizenName;
+		std::string passortNumber;
+		std::string dateOfBirth;
 
 	public:
-		Student(const std::string& name, int age, const std::string& group)
-			: name(name), age(age), group(group) {}
+		Passport(const std::string& citizenName, const std::string& passortNumber, const std::string& dateOfBirth)
+			: citizenName(citizenName), passortNumber(passortNumber), dateOfBirth(dateOfBirth) {}
 
 		virtual void Print() const {
-			std::cout << "Student: " << name << std::endl;
-			std::cout << "Age: " << age << std::endl;
-			std::cout << "Group: " << group << std::endl;
+			std::cout << "Citizen: " << citizenName << std::endl;
+			std::cout << "Passport Number: " << passortNumber << std::endl;
+			std::cout << "Date of birth: " << dateOfBirth << std::endl;
 		}
 };
 
-class Aspirant : public Student {
+class ForeignPassport : public Passport {
 	private:
-		std::string workId;
+		std::string foreignPassportNumber;
+		std::string visaInfo;
 
 	public:
-		Aspirant(const std::string& name, int age, const std::string& group, const std::string& workId)
-			: Student(name, age, group), workId(workId) {}
+		ForeignPassport(const std::string& citizenName, const std::string& passortNumber, const std::string& dateOfBirth, const std::string& foreignPassportNumber, const std::string& visaInfo)
+			: Passport(citizenName, passortNumber, dateOfBirth), foreignPassportNumber(foreignPassportNumber), visaInfo(visaInfo) {
+		}
 
 		void Print() const override {
-			std::cout << "Aspirant: " << name << std::endl;
-			std::cout << "Age: " << age << std::endl;
-			std::cout << "Group: " << group << std::endl;
-			std::cout << "Work ID: " << workId << std::endl;
+			std::cout << "Citizen: " << citizenName << std::endl;
+			std::cout << "Foreign Passport Number: " << foreignPassportNumber << std::endl;
+			std::cout << "Visa Info: " << visaInfo << std::endl;
+
 		}
 };
 
