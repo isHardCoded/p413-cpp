@@ -1,41 +1,90 @@
 ﻿#include <iostream>
+#include <vector>
 
-class Passport {
-	protected:
-		std::string citizenName;
-		std::string passortNumber;
-		std::string dateOfBirth;
-
+class Transport {
 	public:
-		Passport(const std::string& citizenName, const std::string& passortNumber, const std::string& dateOfBirth)
-			: citizenName(citizenName), passortNumber(passortNumber), dateOfBirth(dateOfBirth) {}
-
-		virtual void Print() const {
-			std::cout << "Citizen: " << citizenName << std::endl;
-			std::cout << "Passport Number: " << passortNumber << std::endl;
-			std::cout << "Date of birth: " << dateOfBirth << std::endl;
-		}
+		virtual double calculateTime(double distance) const = 0;
+		virtual double calculateCost(double distance) const = 0;
+		virtual void Print() const = 0;
 };
 
-class ForeignPassport : public Passport {
+class Car : public Transport {
 	private:
-		std::string foreignPassportNumber;
-		std::string visaInfo;
+		double speed;
+		double costPerKm;
 
 	public:
-		ForeignPassport(const std::string& citizenName, const std::string& passortNumber, const std::string& dateOfBirth, const std::string& foreignPassportNumber, const std::string& visaInfo)
-			: Passport(citizenName, passortNumber, dateOfBirth), foreignPassportNumber(foreignPassportNumber), visaInfo(visaInfo) {
+		Car(double speed, double costPerKm) : speed(speed), costPerKm(costPerKm) {}
+
+		double calculateTime(double distance) const override {
+			return distance / speed;
+		}
+
+		double calculateCost(double distance) const override {
+			return distance * costPerKm;
 		}
 
 		void Print() const override {
-			std::cout << "Citizen: " << citizenName << std::endl;
-			std::cout << "Foreign Passport Number: " << foreignPassportNumber << std::endl;
-			std::cout << "Visa Info: " << visaInfo << std::endl;
-
+			std::cout << "Transport: Car" << std::endl;
 		}
+};
+
+class Bicycle : public Transport {
+private:
+	double speed;
+	double costPerKm;
+
+public:
+	Bicycle(double speed, double costPerKm) : speed(speed), costPerKm(costPerKm) {}
+
+	double calculateTime(double distance) const override {
+		return distance / speed;
+	}
+
+	double calculateCost(double distance) const override {
+		return distance * costPerKm;
+	}
+
+	void Print() const override {
+		std::cout << "Transport: Bicycle" << std::endl;
+	}
+};
+
+class Cart : public Transport {
+private:
+	double speed;
+	double costPerKm;
+
+public:
+	Cart(double speed, double costPerKm) : speed(speed), costPerKm(costPerKm) {}
+
+	double calculateTime(double distance) const override {
+		return distance / speed;
+	}
+
+	double calculateCost(double distance) const override {
+		return distance * costPerKm;
+	}
+
+	void Print() const override {
+		std::cout << "Transport: Cart" << std::endl;
+	}
 };
 
 int main()
 {
-	
+	double distance = 100.0;
+
+	Car car(80.0, 0.5);
+	Bicycle bicycle(20.0, 0.3);
+	Cart cart(15.0, 0.1);
+
+	std::vector<Transport*> transports = { &car, &bicycle, &cart };
+
+	for (const auto& transport : transports) {
+		transport->Print();
+
+		std::cout << "Time: " << transport->calculateTime(distance) << std::endl;
+		std::cout << "Cost: " << transport->calculateCost(distance) << std::endl;
+	}
 }
